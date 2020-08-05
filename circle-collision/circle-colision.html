@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Circle Colision</title>
+  </head>
+  <body>
+    <canvas id="canvas" width="800" height="600" style="cursor: none;" />
+    <script>
+      window.onload = function () {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Define circle
+
+        class Circle {
+          x;
+          y;
+          r;
+          constructor(x, y, r) {
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.color = "white";
+          }
+          draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
+            ctx.fill();
+          }
+          collision(other) {
+            const sumOfRadii = this.r + other.r;
+
+            const x1 = this.x;
+            const x2 = other.x;
+            const y1 = this.y;
+            const y2 = other.y;
+
+            const distance = Math.sqrt(
+              Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)
+            );
+
+            const isCollisioning = distance <= sumOfRadii;
+
+            if (isCollisioning) {
+              this.color = "red";
+            } else {
+              this.color = "white";
+            }
+
+            return isCollisioning;
+          }
+        }
+
+        const playerCircle = new Circle(200, 200, 20);
+        const stillCircle = new Circle(600, 300, 50);
+
+        // Render function
+        function render() {
+          // Draw background
+          ctx.fillStyle = "black";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Draw / move circles
+          playerCircle.draw();
+          stillCircle.draw();
+
+          // Add collision to player circle
+          playerCircle.collision(stillCircle);
+        }
+        // Actual rendering
+        const framesPerSecond = 120;
+        setInterval(function () {
+          render();
+        }, 1000 / framesPerSecond);
+
+        // Utility
+        function calculateMousePosition(event) {
+          var rect = canvas.getBoundingClientRect();
+          var root = document.documentElement;
+          var mouseX = event.clientX - rect.left - root.scrollLeft;
+          var mouseY = event.clientY - rect.top - root.scrollTop;
+
+          return {
+            x: mouseX,
+            y: mouseY,
+          };
+        }
+
+        // Move circle 1 with mouse
+        canvas.addEventListener("mousemove", function (event) {
+          const mousePosition = calculateMousePosition(event);
+
+          // const x1 = mousePosition.x;
+          // const x2 = stillCircle.x;
+          // const y1 = mousePosition.y;
+          // const y2 = stillCircle.y;
+
+          // const distance = Math.sqrt(
+          //   Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)
+          // );
+
+          // if (distance > stillCircle.r * 2) {
+          //   playerCircle.x = mousePosition.x;
+          //   playerCircle.y = mousePosition.y;
+          // }
+
+          playerCircle.x = mousePosition.x;
+          playerCircle.y = mousePosition.y;
+
+          // if (distance < stillCircle.r + playerCircle.r) {
+          //   stillCircle.x += stillCircle.x - mousePosition.x;
+          //   stillCircle.y += stillCircle.y - mousePosition.y;
+          //   // stillCircle.x++;
+          //   // stillCircle.y++;
+          // }
+        });
+      };
+    </script>
+  </body>
+</html>
