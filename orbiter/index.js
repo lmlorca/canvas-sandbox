@@ -11,18 +11,16 @@ window.onload = function () {
    *
    *
    */
-  const GRAVITY = 1;
-  /*
-   *
-   *
-   *
-   */
   class Circle {
     x;
     y;
     r;
     color;
-    speed = 0.01;
+    magnitude = 1;
+    velocity = {
+      x: 1,
+      y: 1,
+    };
     constructor(x, y, r, color) {
       this.x = x;
       this.y = y;
@@ -36,25 +34,42 @@ window.onload = function () {
       ctx.fill();
     }
     moveTo(star) {
-      const distanceToStar = this.distanceTo(star);
+      // https://stackoverflow.com/questions/20762079/moving-an-object-towards-a-point-in-javascript
 
-      const distanceX = star.x - this.x;
-      const distanceY = star.y - this.y;
+      // Delta entre destino y origen
+      const deltaX = star.x - this.x;
+      const deltaY = star.y - this.y;
 
-      // constante gravitacional
-      // ACC directamente inversamente a la distancia al sol
-      // la aceleracion maxima tiene que ser visible en 60 fps
+      // Ángulo entre ambos puntos
+      const angle = Math.atan2(deltaY, deltaX);
 
-      // if (this.speed < 0.075) {
-      //   this.speed += 0.01;
-      // }
+      if (this.distanceTo(star) > star.r + this.r) {
+        // Obtener vector de velocidad
+        this.velocity.x = this.magnitude * Math.cos(angle);
+        this.velocity.y = this.magnitude * Math.sin(angle);
 
-      const acceleration = distanceToStar * 0.01;
+        this.move();
 
-      if (distanceToStar > 0 + this.r + star.r && acceleration > 0) {
-        this.x += distanceX * this.speed;
-        this.y += distanceY * this.speed;
+        // Magnitude hackerino
+        // Me invento una masa que son los diametros
+        const totalMass = this.r * 2 + star.r * 2;
+
+        // Esto jfue cacharreando
+        // Se ve bien, sobre todo por la masa, pero no creo que sea correcto
+        this.magnitude =
+          this.magnitude + ((this.distanceTo(star) / 1000) * totalMass) / 1000;
+
+        // this.magnitude = this.magnitude + this.distanceTo(star) / 1000;
+
+        // this.magnitude = this.magnitude + totalMass / 1000;
+
+        // console.log(((this.distanceTo(star) / 1000) * totalMass) / 1000);
       }
+    }
+
+    move() {
+      this.x += this.velocity.x;
+      this.y += this.velocity.y;
     }
 
     distanceTo(star) {
@@ -65,11 +80,14 @@ window.onload = function () {
 
       const distance = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 
-      return distance;
+      return Math.floor(distance);
     }
   }
-  const sun = new Circle(canvas.width / 2, canvas.height / 2, 120, "yellow");
-  const planet = new Circle(100, 133, 20, "cyan");
+  const sun = new Circle(canvas.width / 2, canvas.height / 2, 20, "yellow");
+  const planet = new Circle(0, 0, 5, "cyan");
+  const planet2 = new Circle(100, 100, 10, "cyan");
+  const planet3 = new Circle(0, 0, 15, "cyan");
+  const planet4 = new Circle(canvas.width, canvas.height, 2, "cyan");
   /*
    *
    *
@@ -83,9 +101,15 @@ window.onload = function () {
     // Draw objects
     sun.draw();
     planet.draw();
+    planet2.draw();
+    planet3.draw();
+    planet4.draw();
 
     // Move objects
     planet.moveTo(sun);
+    planet2.moveTo(sun);
+    planet3.moveTo(sun);
+    planet4.moveTo(sun);
   }
 
   /*
