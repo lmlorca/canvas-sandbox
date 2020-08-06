@@ -11,21 +11,29 @@ window.onload = function () {
    *
    *
    */
+  const GRAVITY = 0.6;
   class Circle {
     x;
     y;
     r;
     color;
-    magnitude = 1;
+    mass = 0;
+    /*inertia = {
+      x: 0,
+      y: 0,
+    };*/
     velocity = {
-      x: 1,
-      y: 1,
+      x: 0,
+      y: 0,
     };
-    constructor(x, y, r, color) {
+    constructor(x, y, r, color, mass, velocity) {
       this.x = x;
       this.y = y;
       this.r = r;
       this.color = color;
+      this.mass = mass;
+      this.velocity = velocity;
+      //this.inertia = inertia;
     }
     draw() {
       ctx.fillStyle = this.color;
@@ -34,6 +42,8 @@ window.onload = function () {
       ctx.fill();
     }
     moveTo(star) {
+      const distance = this.distanceTo(star);
+      const attraction = this.getAttractForce(distance, star);
       // https://stackoverflow.com/questions/20762079/moving-an-object-towards-a-point-in-javascript
 
       // Delta entre destino y origen
@@ -43,33 +53,27 @@ window.onload = function () {
       // Ángulo entre ambos puntos
       const angle = Math.atan2(deltaY, deltaX);
 
-      if (this.distanceTo(star) > star.r + this.r) {
-        // Obtener vector de velocidad
-        this.velocity.x = this.magnitude * Math.cos(angle);
-        this.velocity.y = this.magnitude * Math.sin(angle);
+      // if (distance > star.r + this.r) {
+      //   // Obtener vector de velocidad
+      this.velocity.x += attraction * Math.cos(angle);
+      this.velocity.y += attraction * Math.sin(angle);
 
-        this.move();
+      console.log(this.velocity.x);
 
-        // Magnitude hackerino
-        // Me invento una masa que son los diametros
-        const totalMass = this.r * 2 + star.r * 2;
+      this.move();
+      // }
+    }
 
-        // Esto jfue cacharreando
-        // Se ve bien, sobre todo por la masa, pero no creo que sea correcto
-        this.magnitude =
-          this.magnitude + ((this.distanceTo(star) / 1000) * totalMass) / 1000;
-
-        // this.magnitude = this.magnitude + this.distanceTo(star) / 1000;
-
-        // this.magnitude = this.magnitude + totalMass / 1000;
-
-        // console.log(((this.distanceTo(star) / 1000) * totalMass) / 1000);
-      }
+    getAttractForce(distance, star) {
+      const force = GRAVITY * ((this.mass * star.mass) / Math.pow(distance, 2));
+      return force;
     }
 
     move() {
       this.x += this.velocity.x;
       this.y += this.velocity.y;
+      // this.x += this.inertia.x;
+      // this.y += this.inertia.y;
     }
 
     distanceTo(star) {
@@ -83,11 +87,28 @@ window.onload = function () {
       return Math.floor(distance);
     }
   }
-  const sun = new Circle(canvas.width / 2, canvas.height / 2, 20, "yellow");
-  const planet = new Circle(0, 0, 5, "cyan");
-  const planet2 = new Circle(100, 100, 10, "cyan");
-  const planet3 = new Circle(0, 0, 15, "cyan");
-  const planet4 = new Circle(canvas.width, canvas.height, 2, "cyan");
+  const sun = new Circle(
+    canvas.width / 2,
+    canvas.height / 2,
+    50,
+    "yellow",
+    1700
+  );
+  // const planet = new Circle(400, 200, 5, "cyan", 20, { x: 1, y: -1 });
+  // const planet2 = new Circle(1200, 200, 15, "red", 50, { x: 3, y: 6 });
+  // const planet3 = new Circle(1300, 300, 10, "green", 30, { x: 3, y: 6 });
+
+  const planets = [
+    new Circle(400, 200, 5, "cyan", 20, { x: 1, y: 5 }),
+    new Circle(1200, 200, 15, "red", 50, { x: 3, y: 6 }),
+    new Circle(500, 800, 10, "green", 33, { x: 4, y: 3 }),
+    new Circle(500, 800, 12, "green", 44, { x: 4, y: 3 }),
+    new Circle(500, 800, 14, "green", 55, { x: 4, y: 3 }),
+    new Circle(500, 800, 16, "green", 66, { x: 4, y: 3 }),
+    new Circle(400, 200, 5, "cyan", 30, { x: 1, y: 5 }),
+    new Circle(400, 200, 5, "cyan", 15, { x: 10, y: 3 }),
+    new Circle(1100, 600, 12, "white", 18, { x: -4.5, y: 10 }),
+  ];
   /*
    *
    *
@@ -98,18 +119,13 @@ window.onload = function () {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw objects
     sun.draw();
-    planet.draw();
-    planet2.draw();
-    planet3.draw();
-    planet4.draw();
 
-    // Move objects
-    planet.moveTo(sun);
-    planet2.moveTo(sun);
-    planet3.moveTo(sun);
-    planet4.moveTo(sun);
+    // Update planets
+    for (planet of planets) {
+      planet.draw();
+      planet.moveTo(sun);
+    }
   }
 
   /*
