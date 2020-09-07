@@ -28,17 +28,19 @@ window.onload = function () {
 
   const addPlanetBtn = document.getElementById("addPlanetBtn");
   addPlanetBtn.addEventListener("click", function () {
-    var letters = "0123456789ABCDEF";
-    var color = "#";
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+    if (planets.length < 24) {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      const newPlanet = new Circle(1100, 600, 12, color, 18, {
+        x: -4.5,
+        y: 10,
+      });
+      newPlanet.createHTML();
+      planets.push(newPlanet);
     }
-    const newPlanet = new Circle(1100, 600, 12, color, 18, {
-      x: -4.5,
-      y: 10,
-    });
-    newPlanet.createHTML();
-    planets.push(newPlanet);
   });
 
   function render() {
