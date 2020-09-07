@@ -1,9 +1,22 @@
+function create_UUID() {
+  var dt = new Date().getTime();
+  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (
+    c
+  ) {
+    var r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return uuid;
+}
 class Circle {
   x;
   y;
   r;
   color;
   mass = 0;
+  paused = true;
+  active = false;
   /*inertia = {
       x: 0,
       y: 0,
@@ -12,6 +25,7 @@ class Circle {
     x: 0,
     y: 0,
   };
+
   constructor(x, y, r, color, mass, velocity) {
     this.x = x;
     this.y = y;
@@ -19,6 +33,7 @@ class Circle {
     this.color = color;
     this.mass = mass;
     this.velocity = velocity;
+    this.id = create_UUID();
     //this.inertia = inertia;
   }
   draw() {
@@ -72,8 +87,6 @@ class Circle {
   }
 
   createHTML() {
-    const li = document.createElement("LI");
-    li.innerHTML = `<strong>Mass: </strong> ${this.mass} | <strong>Velocity: </storng> ${this.velocity.x} ${this.velocity.y}`;
-    planetListElement.appendChild(li);
+    DOMHandlePlanetList(this);
   }
 }
