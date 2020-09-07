@@ -4,21 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Orbiter</title>
-    <style>
-      #PlanetList {
-        float: left;
-        max-height: 1080px;
-        overflow-y: scroll;
-        list-style: none;
-      }
-      #canvas {
-        float: right;
-      }
-    </style>
+    <link rel="stylesheet" href="./style/style.css" />
   </head>
   <body>
-    <ul style="float: left" id="PlanetList"></ul>
-    <button id="addPlanetBtn">Add Planet</button>
+    <div id="controls">
+      <button id="addPlanetBtn">Add Planet</button>
+      <ul id="PlanetList"></ul>
+    </div>
     <canvas id="canvas" width="1920" height="1080" />
     <script src="./js/circle.js"></script>
     <script src="./index.js"></script>

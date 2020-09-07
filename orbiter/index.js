@@ -1,11 +1,17 @@
 let canvas;
 let ctx;
-let planetList;
+let planetListElement;
 const GRAVITY = 0.6;
 
 window.onload = function () {
-  planetList = document.getElementById("PlanetList");
+  planetListElement = document.getElementById("PlanetList");
   canvas = document.getElementById("canvas");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  window.onresize = function () {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
   ctx = canvas.getContext("2d");
 
   const sun = new Circle(

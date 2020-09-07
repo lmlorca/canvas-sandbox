@@ -74,6 +74,6 @@ class Circle {
   createHTML() {
     const li = document.createElement("LI");
     li.innerHTML = `<strong>Mass: </strong> ${this.mass} | <strong>Velocity: </storng> ${this.velocity.x} ${this.velocity.y}`;
-    planetList.appendChild(li);
+    planetListElement.appendChild(li);
   }
 }
